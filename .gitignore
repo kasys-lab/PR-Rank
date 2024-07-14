@@ -6,3 +6,5 @@ outputs/
 config.yaml
 *.pkl
 index/
+*.tsv
+*.csv
