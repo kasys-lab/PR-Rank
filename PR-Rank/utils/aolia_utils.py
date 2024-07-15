@@ -38,3 +38,11 @@ def get_dataset_for_experiment(relevance_judgement_file_path: Path) -> tuple[set
             query_ids_expt.add(item["query_id"])
 
     return doc_ids_expt, query_ids_expt
+
+
+FEATURES_INDEX = {
+    "Q": [i for i in range(0, 6+1)],
+    "D": [i for i in range(7, 28+1)],
+    "Q-D": [i for i in range(29, 58 + 1)],
+    "LtR": [7, 8, 9, 10, 26, 27, 28] + [i for i in range(29, 58 + 1)],
+}
