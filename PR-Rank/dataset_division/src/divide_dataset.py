@@ -78,6 +78,7 @@ def divide_dataset(
     domain2step: dict[str, str],
     qid2location: dict[str, int],
     domains_dir_path: Path,
+    features_index: list[int],
 ):
     # assign each line to a domain based on the query ID
     with open(feature_file_path, "r") as in_f:
@@ -87,11 +88,13 @@ def divide_dataset(
             query_id = line[1]
             doc_id = line[2]
             futures = [float(x) for x in line[3:]]
-            futures = [futures[i] for i in FEATURES_INDEX["LtR"]]
+            futures = [futures[i] for i in features_index]
             cluster_id, step = qid2location.get(query_id)
             meta_step = domain2step.get(cluster_id)
 
-            dataset_dir_path = domains_dir_path / meta_step / f"dataset_{cluster_id}"
+            dataset_dir_path = (
+                Path(domains_dir_path) / meta_step / f"dataset_{cluster_id}"
+            )
             if not dataset_dir_path.exists():
                 dataset_dir_path.mkdir()
 
@@ -134,11 +137,14 @@ def sort_files_by_qid(domains_dir_path):
 def run(config: OmegaConf):
     logger.info("dividing the dataset into domains")
     domains_dir_path = Path(config.cluster.domains_dir_path)
+    ltr_datasets_dir_path = Path(config.cluster.ltr_datasets_dir_path)
 
     if not domains_dir_path.exists():
         domains_dir_path.mkdir(parents=True)
+        ltr_datasets_dir_path.mkdir(parents=True)
         for step in ["train", "valid", "test"]:
             (domains_dir_path / step).mkdir()
+            (ltr_datasets_dir_path / step).mkdir()
 
         with open(config.cluster.cluster2qids_file_path, "r") as f:
             cluster2qids = json.load(f)
@@ -153,8 +159,23 @@ def run(config: OmegaConf):
 
         qid2location = split_query(cluster2qids)
 
+        # for ltr dataset
         divide_dataset(
-            config.data.features_file_path, domain2step, qid2location, domains_dir_path
+            config.data.features_file_path,
+            domain2step,
+            qid2location,
+            config.cluster.ltr_datasets_dir_path,
+            FEATURES_INDEX["LtR"],
+        )
+        sort_files_by_qid(domains_dir_path)
+
+        # for pr-rank dataset
+        divide_dataset(
+            config.data.features_file_path,
+            domain2step,
+            qid2location,
+            domains_dir_path,
+            FEATURES_INDEX["Q"] + FEATURES_INDEX["D"] + FEATURES_INDEX["Q-D"],
         )
         sort_files_by_qid(domains_dir_path)
     else:

@@ -4,7 +4,7 @@ import hydra
 from dataset_division.src import (
     calculate_q_level_features,
     cluster_queries,
-    divide_ltr_dataset,
+    divide_dataset,
     eval_division,
     train_ltr_models
 )
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def main(config: OmegaConf) -> None:
     calculate_q_level_features.run(config)
     cluster_queries.run(config)
-    divide_ltr_dataset.run(config)
+    divide_dataset.run(config)
     train_ltr_models.run(config)
     eval_division.run(config)
 
