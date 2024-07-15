@@ -7,6 +7,7 @@ from pathlib import Path
 import jsonlines
 from ir_datasets.datasets.base import Dataset
 from omegaconf import OmegaConf
+from tqdm import tqdm
 from utils.file_utils import load_pickle
 from utils.text_utils import count_valid_tokens
 
@@ -51,11 +52,11 @@ def extract_d_features(document, document_detail, domain_counter, clf, tf_idf_pi
     sentence_count = document_detail["sentence_count"]
     domain = document_detail["second_level_domain"]
 
+    x = tf_idf_pipe.transform(text_tokens + title_tokens)
+    topic_proba = clf.predict_proba(x)[0].tolist()
+
     text = count_valid_tokens(text_tokens)
     title = count_valid_tokens(title_tokens)
-
-    x = tf_idf_pipe.transform(title + text)
-    topic_proba = clf.predict_proba(x)[0].tolist()
 
     features = [
         dlen(text),
@@ -64,7 +65,7 @@ def extract_d_features(document, document_detail, domain_counter, clf, tf_idf_pi
         log_dlen(title),
         calc_ari_score(text_tokens, sentence_count),
         sentence_count,
-        topic_proba,
+        *topic_proba,
         domain_freq(domain, domain_counter),
         domain_length(domain),
         num_of_slash(document.url),
@@ -74,7 +75,7 @@ def extract_d_features(document, document_detail, domain_counter, clf, tf_idf_pi
 
 
 def run(dataset: Dataset, config: OmegaConf):
-    logger.info("Calculating D features")
+    logger.info("Extracting D features")
     document_features_file_path = Path(config.features.document_features_file_path)
 
     if not document_features_file_path.exists():
@@ -88,14 +89,14 @@ def run(dataset: Dataset, config: OmegaConf):
             open(document_features_file_path, "w") as out_f,
         ):
             writer = csv.writer(out_f)
-            for document_detail in reader:
+            for document_detail in tqdm(reader):
                 doc_id = document_detail["doc_id"]
                 doc = docs_store.get(doc_id)
                 features = extract_d_features(
                     doc, document_detail, domain_counter, clf, tf_idf_pipe
                 )
-                writer.writerow(doc_id + features)
+                writer.writerow([doc_id] + features)
     else:
         logger.info("Document features already exist. Skipping...")
 
-    logger.info("Calculating D features completed")
+    logger.info("Extracting D features completed")

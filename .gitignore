@@ -8,3 +8,5 @@ config.yaml
 index/
 *.tsv
 *.csv
+*.json
+*.txt

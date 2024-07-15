@@ -268,7 +268,7 @@ def extract_qd_features(doc_detail, query_detail, collection):
     title = [lemma_pos_pair[0] for lemma_pos_pair in doc_detail["title_tokens"]]
 
     fields = [title, text]
-    q = count_valid_tokens(query_detail["tokens"])
+    q = count_valid_tokens(query_detail)
 
     features = []
     for field in fields:
@@ -296,44 +296,49 @@ def process_files(
         open(query_document_features_file, "w") as qd_features_csv,
         open(features_file, "w") as features_csv,
     ):
-        doc_features = csv.reader(doc_features_csv)
         qd_features_writer = csv.writer(qd_features_csv)
         features_writer = csv.writer(features_csv)
+
+        rel_judgements = iter(rel_judgements)
+        doc_details = iter(doc_details)
+        doc_features = iter(csv.reader(doc_features_csv))
 
         rel_judgement = next(rel_judgements, None)
         doc_detail = next(doc_details, None)
         doc_feature = next(doc_features, None)
 
         while rel_judgement:
-            current_doc_id = int(rel_judgement["doc_id"], 16)
+            current_doc_id = rel_judgement["doc_id"]
 
-            if doc_detail and int(doc_detail["doc_id"], 16) < current_doc_id:
+            if doc_detail and int(doc_detail["doc_id"], 16) < int(current_doc_id, 16):
                 doc_detail = next(doc_details, None)
-            if doc_feature and int(doc_feature["doc_id"], 16) < current_doc_id:
+            if doc_feature and int(doc_feature[0], 16) < int(current_doc_id, 16):
                 doc_feature = next(doc_features, None)
 
             if (
                 doc_detail
-                and doc_detail["doc_id"] == current_doc_id
+                and int(doc_detail["doc_id"], 16) == int(current_doc_id, 16)
                 and doc_feature
-                and doc_feature["doc_id"] == current_doc_id
+                and int(doc_feature[0], 16) == int(current_doc_id, 16)
             ):
                 query_id = rel_judgement["query_id"]
                 query_detail = query_details_dict[rel_judgement["query_id"]]
                 query_features = query_features_dict[rel_judgement["query_id"]]
 
                 qd_features = extract_qd_features(doc_detail, query_detail, collection)
-                qd_features_writer.writerow(query_id, current_doc_id, qd_features)
+                qd_features_writer.writerow([query_id, current_doc_id] + qd_features)
 
                 relevance = rel_judgement["relevance"]
                 features = query_features + doc_feature[1:] + qd_features
-                features_writer.writerow(relevance, query_id, current_doc_id, features)
+                features_writer.writerow(
+                    [relevance, query_id, current_doc_id] + features
+                )
 
             rel_judgement = next(rel_judgements, None)
 
 
 def run(config: OmegaConf):
-    logger.info("Calculating Q-D features")
+    logger.info("Extracting Q-D features")
 
     # sort relevance judgement file for efficient processing
     sorted_relevance_judgement_file_path = Path(
@@ -344,15 +349,15 @@ def run(config: OmegaConf):
         sort_jsonl(
             config.data.relevance_judgement_file_path,
             sorted_relevance_judgement_file_path,
-            key=lambda x: int(x["doc_id"], 16),
+            sort_key=lambda x: int(x["doc_id"], 16),
         )
 
     # extract Q-D features
     query_document_features_file_path = Path(
-        config.features.document_features_file_path
+        config.features.query_document_features_file_path
     )
     if not query_document_features_file_path.exists():
-        collection = Collection.load(config.preprocess.collection_file_path)
+        collection = Collection.load(open(config.preprocess.collection_file_path))
         query_features_dict = make_query_features_dict(
             config.features.query_features_file_path
         )
@@ -365,9 +370,11 @@ def run(config: OmegaConf):
             config.features.document_features_file_path,
             query_details_dict,
             query_features_dict,
+            config.features.query_document_features_file_path,
+            config.features.features_file_path,
             collection,
         )
     else:
         logger.info("Q-D features already exist. Skipping...")
 
-    logger.info("Calculating Q-D features completed")
+    logger.info("Extracting Q-D features completed")

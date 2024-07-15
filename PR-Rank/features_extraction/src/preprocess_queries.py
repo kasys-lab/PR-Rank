@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import spacy
+from ir_datasets.datasets.base import Dataset
 from omegaconf import OmegaConf
 from tqdm import tqdm
 from utils.aolia_utils import get_dataset_for_experiment, load_queries_store
@@ -55,23 +56,21 @@ def preprocess(
                 continue
 
 
-def run(config: OmegaConf):
-
-    query_details_file_path = Path(config.data.query_details_file_path)
+def run(dataset: Dataset, config: OmegaConf):
+    query_details_file_path = Path(config.preprocess.query_details_file_path)
     if not query_details_file_path.exists():
-        queries_store = load_queries_store(config.data.queries_store_file_path)
+        queries_store = load_queries_store(dataset, config.data.queries_store_file_path)
 
         _doc_ids_expt, query_ids_expt = get_dataset_for_experiment(
             config.data.relevance_judgement_file_path
         )
         logger.info(f"preprocessing {len(query_ids_expt)} queries...")
 
-
         preprocess(
             queries_store,
             query_ids_expt,
             query_details_file_path,
-            logger,
+            config.preprocess.text_length_limit,
         )
     else:
         logger.info(f"{query_details_file_path} already exists, skipping preprocessing")

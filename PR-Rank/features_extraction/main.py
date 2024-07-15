@@ -21,7 +21,7 @@ def main(config: OmegaConf) -> None:
 
     train_topic_estimator.run(config)
     preprocess_documents.run(dataset, config)
-    preprocess_queries.run(config)
+    preprocess_queries.run(dataset, config)
     extract_d_features.run(dataset, config)
     extract_q_features.run(config)
     extract_qd_features.run(config)

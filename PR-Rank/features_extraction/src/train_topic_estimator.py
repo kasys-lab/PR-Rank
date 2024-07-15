@@ -128,11 +128,11 @@ def run(config: OmegaConf):
         )
 
         # train topic estimator
-        clf = LogisticRegression(random_state=42, max_iter=1000)
+        clf = LogisticRegression(random_state=42, max_iter=100)
 
         param_distributions = {
-            "C": loguniform(1e-3, 1e3),
-            "penalty": ["l1", "l2", "elasticnet"],
+            "C": loguniform(1e-2, 1e2),
+            "penalty": ["l1", "l2"],
             "solver": ["saga"],
             "l1_ratio": uniform(0, 1),
         }
@@ -140,7 +140,7 @@ def run(config: OmegaConf):
         random_search = RandomizedSearchCV(
             clf,
             param_distributions=param_distributions,
-            n_iter=100,  # 試行回数
+            n_iter=20,
             cv=5,
             scoring="f1_macro",
             n_jobs=-1,

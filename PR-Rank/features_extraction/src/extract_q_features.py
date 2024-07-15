@@ -7,6 +7,7 @@ import jsonlines
 import numpy as np
 from features_extraction.src.collection import Collection
 from omegaconf import OmegaConf
+from tqdm import tqdm
 from utils.text_utils import count_valid_tokens
 
 logger = logging.getLogger(__name__)
@@ -82,22 +83,22 @@ def extract_q_features(query_tokens, collection) -> list[float]:
 
 
 def run(config: OmegaConf):
-    logger.info("Calculating Q features")
-    query_features_file_path = Path(config.features.document_features_file_path)
+    logger.info("Extracting Q features")
+    query_features_file_path = Path(config.features.query_features_file_path)
 
     if not query_features_file_path.exists():
-        collection = Collection.load(config.preprocess.collection_file_path)
+        collection = Collection.load(open(config.preprocess.collection_file_path))
         with (
             jsonlines.open(config.preprocess.query_details_file_path, "r") as reader,
             open(query_features_file_path, "w") as out_f,
         ):
             writer = csv.writer(out_f)
-            for query_detail in reader:
+            for query_detail in tqdm(reader):
                 query_id = query_detail["query_id"]
                 query = query_detail["tokens"]
                 features = extract_q_features(query, collection)
-                writer.writerow(query_id + features)
+                writer.writerow([query_id] + features)
     else:
         logger.info("Q features already exist. Skipping...")
 
-    logger.info("Calculating Q features completed")
+    logger.info("Extracting Q features completed")
