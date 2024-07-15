@@ -14,7 +14,7 @@ Please download the following resources:
 Install the required dependencies as follows:
 
 ```sh
-conda env create -n PR-Rank -f env.yml
+conda env create -f env.yml
 conda activate PR-Rank
 pip install ./PR-Rank
 ```
