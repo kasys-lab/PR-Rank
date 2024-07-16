@@ -3,7 +3,6 @@ __pycache__/
 outputs/
 *.jsonl
 *.bin
-config.yaml
 *.pkl
 index/
 *.tsv

@@ -1,0 +1,24 @@
+topic_estimator:
+  sample_count: 100_000
+  language: English
+  lang_confidence_threshold: 0.6
+  test_size: 0.2
+  dmoz_file_path: PR-Rank/features_extraction/data/dmoz_full_toplevel_imbalanced.tsv
+  vectorizer_file_path: PR-Rank/features_extraction/models/vectorizer.pkl
+  model_file_path: PR-Rank/features_extraction/models/topic_estimator.pkl
+  eval_file_path: PR-Rank/features_extraction/models/eval_topic_estimator.txt
+preprocess:
+  text_length_limit: 15_000
+  document_details_file_path: PR-Rank/features_extraction/data/document_details.jsonl
+  query_details_file_path: PR-Rank/features_extraction/data/query_details.jsonl
+  collection_file_path: PR-Rank/features_extraction/data/collection.json
+  sld_counter_file_path: PR-Rank/features_extraction/data/sld_counter.json
+features:
+  document_features_file_path: PR-Rank/features_extraction/data/document_features.csv
+  query_features_file_path: PR-Rank/features_extraction/data/query_features.csv
+  query_document_features_file_path: PR-Rank/features_extraction/data/query_document_features.csv
+  features_file_path: PR-Rank/features_extraction/data/features.csv
+data:
+  queries_store_file_path: PR-Rank/aolia_qrel/data/queries_store.pkl
+  relevance_judgement_file_path: PR-Rank/aolia_qrel/data/relevance_judgement.jsonl
+  sorted_relevance_judgement_file_path: PR-Rank/aolia_qrel/data/sorted_relevance_judgement.jsonl

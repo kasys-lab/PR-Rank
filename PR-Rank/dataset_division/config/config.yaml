@@ -1,0 +1,19 @@
+data:
+  features_file_path: PR-Rank/features_extraction/data/features.csv
+  q_level_features_file_path: PR-Rank/dataset_division/data/q_level_features.csv
+  ranklib_jar_path: RankLib.jar
+cluster:
+  qid2cluster_file_path: PR-Rank/dataset_division/experiment/q-d/utils/qid2cluster.json
+  cluster2qids_file_path: PR-Rank/dataset_division/experiment/q-d/utils/cluster2qid.json
+  domain2step_file_path: PR-Rank/dataset_division/experiment/q-d/utils/domain2step.json
+  number_of_domains: 500
+  method: kmeans
+  feature_sets:
+    - Q-D
+  domains_dir_path: PR-Rank/dataset_division/experiment/q-d/data/domains
+  ltr_datasets_dir_path: PR-Rank/dataset_division/experiment/q-d/data/ltr_datasets
+train:
+  ltr_models_dir_path: PR-Rank/dataset_division/experiment/q-d/models/ltr_models
+  jobs: 16
+eval:
+  eval_file_path: PR-Rank/dataset_division/experiment/q-d/weight_variances.txt

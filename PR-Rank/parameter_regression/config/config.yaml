@@ -1,0 +1,25 @@
+ranklib_jar_path: RankLib.jar
+domain_feature_sets:
+  - Q-D
+extract_method: from_all_instances
+domains_dir_path: PR-Rank/dataset_division/experiment/q-d/data/domains
+ltr_datasets_dir_path: PR-Rank/dataset_division/experiment/q-d/data/ltr_datasets
+ltr_models_dir_path: PR-Rank/dataset_division/experiment/q-d/models/ltr_models/
+domain_features_dir_path: PR-Rank/parameter_regression/experiment/q-d/data/domain_features
+model_parameters_dir_path: PR-Rank/parameter_regression/experiment/q-d/data/model_parameters
+global_model:
+  large_dataset_dir_path: PR-Rank/dataset_division/experiment/q-d/data/large_dataset
+  global_model_dir_path: PR-Rank/dataset_division/experiment/q-d/models/global_model
+  parallel: 16
+  iteration: 16
+pr_rank:
+  models_dir_path: PR-Rank/parameter_regression/experiment/q-d/models/pr_rank
+  scaler_file_path: PR-Rank/parameter_regression/experiment/q-d/models/pr_rank/scaler.pkl
+  n_trials: 100
+eval:
+  pr_rank_file_path: PR-Rank/parameter_regression/experiment/q-d/models/pr_rank/RandomForest/model.pkl
+  test_dataset_highest_rel: 1
+  test_datasets_dir_path: PR-Rank/dataset_division/experiment/q-d/data/ltr_datasets/test
+  ideal_models_dir_path: PR-Rank/dataset_division/experiment/q-d/models/ltr_models/test
+  pr_rank_output_dir_path: PR-Rank/parameter_regression/experiment/q-d/models/pr_rank/RandomForest/models_with_regressed_parameters/test
+  result_file_path: PR-Rank/parameter_regression/experiment/q-d/result.csv

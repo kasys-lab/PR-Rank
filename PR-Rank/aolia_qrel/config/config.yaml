@@ -1,0 +1,18 @@
+filter:
+  fasttext_model_file_path: PR-Rank/aolia_qrel/models/lid.176.bin
+  target_labels:
+  - __label__en
+  document_languages_file_path: PR-Rank/aolia_qrel/data/document_languages.jsonl
+  query_languages_file_path: PR-Rank/aolia_qrel/data/query_languages.jsonl
+  filtered_doc_ids_file_path: PR-Rank/aolia_qrel/data/filtered_doc_ids.jsonl
+  filtered_query_ids_file_path: PR-Rank/aolia_qrel/data/filtered_query_ids.jsonl
+  filtered_relevant_docs_file_path: PR-Rank/aolia_qrel/data/filtered_relevant_docs.pkl
+ranking:
+  index_dir_path: PR-Rank/aolia_qrel/index
+  ranking_file_path: PR-Rank/aolia_qrel/data/ranking.jsonl
+dataset:
+  negative_example_count: 10
+  query_count: 360_000
+  relevance_judgement_file_path: PR-Rank/aolia_qrel/data/relevance_judgement.jsonl
+queries_store_file_path: PR-Rank/aolia_qrel/data/queries_store.pkl
+java_home_dir_path: path/to/java_home_dir
