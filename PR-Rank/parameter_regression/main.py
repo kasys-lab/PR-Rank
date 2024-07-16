@@ -7,6 +7,7 @@ from parameter_regression.src import (
     extract_model_parameters,
     train_global_model,
     train_pr_rank,
+    eval_pr_rank
 )
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,8 @@ def main(config: OmegaConf) -> None:
     extract_model_parameters.run(config)
     train_global_model.run(config)
     train_pr_rank.run(config)
+    eval_pr_rank.run(config)
+
 
 if __name__ == "__main__":
     main()

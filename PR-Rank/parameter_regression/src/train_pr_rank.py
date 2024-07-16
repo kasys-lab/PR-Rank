@@ -79,7 +79,7 @@ def eval_model_on_downstream_task(
     ):
         dataset_name = dataset_dir_path.name.split("_")[-1]
         ltr_model_dir_path = ltr_models_dir_path / f"dataset_{dataset_name}"
-        ltr_model_dir_path.mkdir(exist_ok=True)
+        ltr_model_dir_path.mkdir(parents=True, exist_ok=True)
 
         # save regressed parameter to model file
         test_file_path = dataset_dir_path / "test.txt"
@@ -109,7 +109,6 @@ def run(config: OmegaConf):
 
         X_train, y_train = load_dataset(feature_dir_path, target_dir_path, "train")
         X_valid, y_valid = load_dataset(feature_dir_path, target_dir_path, "valid")
-        X_test, _y_test = load_dataset(feature_dir_path, target_dir_path, "test")
 
         X_train_val = pd.concat([X_train, X_valid])
         y_train_val = pd.concat([y_train, y_valid])
