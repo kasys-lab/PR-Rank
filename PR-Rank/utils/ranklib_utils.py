@@ -166,3 +166,11 @@ def gather_parameters(datasets_dir_path: Path) -> dict[str, list[float]]:
         weight = convert_indexed_string_to_list(last_line)
         model_weights[dataset_id] = weight
     return model_weights
+
+
+def save_ltr_model(ltr_model_weight: str, model_dir_path: Path):
+    weight_line = convert_list_to_indexed_string(ltr_model_weight)
+
+    with open(model_dir_path, "w") as f:
+        f.write("## Coordinate Ascent\n")
+        f.write(weight_line)
